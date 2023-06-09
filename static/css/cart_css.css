@@ -1,0 +1,158 @@
+        .my-cart-btn,  .buttons{
+            margin-top: 30px;
+            padding: 0 190px;
+        }
+        .btn-order, .btn-send-order{
+            background-color:#449494;
+            border-radius:40px;
+            border:none;
+            display:inline-block;
+            cursor:pointer;
+            color:#ffffff;
+            font-family:Verdana;
+            font-size:16px;
+            font-weight:bold;
+            padding:20px 17px;
+            text-decoration:none;
+        }
+        .btn-order:hover {
+            background-color: #59e083;
+        }
+        .btn-order:active, .btn-send-order:active {
+            position:relative;
+            top:2px;
+        }
+        .btn-send-order {
+           background-color: #45b969;
+        }
+        .btn-send-order:hover {
+            background-color: #09723d;
+        }
+
+
+        .my{
+            background-color: #d7e0e0;
+            width: 760px;
+            padding: 40px;
+            border-radius: 30px;
+            margin:0 auto;
+        }
+        .my-cart table{
+            border-spacing: 0;
+            font-family: 'Open Sans', sans-serif;
+            border-collapse: separate;
+            text-indent: initial;
+            margin: 0 auto;
+        }
+        .my-cart table td{
+            vertical-align: middle;
+            padding: 20px;
+            font-size: 14px;
+            text-align: center;
+            border-top: 1px solid #1D766F;
+            border-bottom: 1px solid #1D766F;
+            border-right: none;
+            background: white;
+            border-left:none;
+        }
+        .my-cart table td:first-child {
+            border-left:1px solid #1D766F;
+        }
+        .my-cart table td:last-child {
+            border-right: 1px solid #1D766F;
+        }
+        .my-cart-sum{
+            margin-top: 40px;
+        }
+        .my-cart table td:last-child button:first-child{
+           color:white;
+           background-color: #59e083;
+           border-color: #59e083;
+         }
+        .my-cart table td:last-child button:nth-last-child(2){
+           color:white;
+           background-color: #34a958;
+           border-color: #34a958;
+           margin-right: 5px;
+         }
+        .my-cart table td:last-child button:last-child{
+           color:white;
+           background-color: #dc5c5c;
+           border-color: #dc5c5c;
+        }
+
+
+        #div-form {
+            display: none;
+            background-color: #d7e0e0;
+            width: 630px;
+            padding: 40px;
+            border-radius: 30px;
+            margin: 20px auto 0;
+        }
+        #title-form{
+            color: #1D766F;
+            font-family: Verdana, sans-serif;
+            font-size: 22px;
+        }
+        .star{
+            color:red;
+            font-weight: bold;
+        }
+        .no-star{
+            visibility: hidden;
+        }
+        .description{
+            font-weight: bold;
+        }
+
+
+        .field_error{
+            font-size: 15px;
+            display: none;
+            color: red;
+            margin-top: 2px;
+        }
+        input:not(.input-check) {
+            height: 30px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+
+        .cart-created{
+            display: none;
+            background-color: #d7e0e0;
+            width: 690px;
+            padding: 40px;
+            border-radius: 30px;
+            margin: 40px auto 0;
+        }
+
+
+
+        .my-cart2 table{
+            border-spacing: 0;
+            font-family: 'Open Sans', sans-serif;
+            border-collapse: separate;
+            text-indent: initial;
+            margin: 0 auto;
+        }
+        .my-cart2 table td{
+            vertical-align: middle;
+            padding: 20px;
+            font-size: 14px;
+            text-align: center;
+            border-top: 1px solid #1D766F;
+            border-bottom: 1px solid #1D766F;
+            border-right: none;
+            background: white;
+            border-left:none;
+        }
+        .my-cart2 table td:first-child {
+            border-left:1px solid #1D766F;
+        }
+        .my-cart2 table td:last-child {
+            border-right: 1px solid #1D766F;
+        }
+

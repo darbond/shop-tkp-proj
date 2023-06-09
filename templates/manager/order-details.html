@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+{% load static %}
+{% load tz %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+  <header>
+            <title>Замовлення</title>
+            <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+            <link rel="stylesheet" href="{% static "css/orders_css.css" %}">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <div class="topnav">
+                 <a href="/web/manager" class="catalog-link">Каталог</a>
+                 <a href="/web/manager/orders">Замовлення</a>
+                <div class="logo">BD-Shop</div>
+                <div class="exit"><a href="/web">Вийти</a></div>
+            </div>
+    </header>
+
+    <body>
+    <h1 id="h1-order-det">Замовлення</h1>
+         <input type="hidden" id="order_date" name="variable" value="{{ curorder.1|timezone:"UTC"|date:"Y-m-d" }} {{ curorder.1|timezone:"UTC"|time:"H:i" }}">
+         <table class="table_orders_det">
+            <tr><th>№</th><td>{{ curorder.0 }}</td></tr>
+            <tr><th>Статус</th><td>{{ curorder.7 }}</td></tr>
+            <tr><th>Дата</th><td id="local_datetime"></td></tr>
+            <tr><th>Подзвонити</th><td>
+              {% if curorder.2 == 1 %} ТАК<br><br></bt>{{ curorder.4 }}<br>{{ curorder.3 }}
+                            {% else %}НІ
+                        {% endif %}</td></tr>
+            <tr><th>Ім'я</th><td>{{ curorder.3 }}</td></tr>
+            <tr><th>Телефон</th><td>{{ curorder.4 }}</td></tr>
+            <tr><th>Адрес</th><td>{{ curorder.5 }}</td></tr>
+            <tr><th>Деталі доставки</th><td>{{ curorder.6 }}</td></tr>
+            <tr><th>Сума</th><td><b>
+                            {% for s in order_sum %}
+                                {% if s.0 == curorder.0 %}
+                                    {{ s.1 }} грн.
+                                {% endif %}
+                            {% endfor %}
+                        </b></td></tr>
+
+        </table>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script>
+        var orderDateVal = document.getElementById("order_date").value;
+        var dateStringWithTime = moment.utc(orderDateVal).local().format('YYYY-MM-DD HH:mm');
+        console.log('dateStringWithTime', dateStringWithTime)
+        document.getElementById("local_datetime").innerText = dateStringWithTime
+    </script>
+</body>
+</html>

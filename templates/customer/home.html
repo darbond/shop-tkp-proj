@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Каталог{% endblock %}
+{% block content %}<!--содержит основное содержимое страницы-->
+    <header>
+        <link rel="stylesheet" href="{% static "css/catalog_css.css" %}">
+    </header>
+
+        <h1>Каталог посуду</h1>
+        <div class="sidebar">
+            <h3>Категорії</h3>
+            <ul class="categories">
+                <li {% if not category %}{% endif %}> <a href=/web/customer/>Всі</a></li>
+                  {% for c in categories %}
+                    <li{% if curcat == c.1 %} style="font-weight: bold" {% endif %}> <a href="/web/customer/{{ c.1 }}">{{ c.0 }}</a> </li>
+                  {% endfor %}
+            </ul>
+        </div>
+
+        <table class="table_product">
+            <tr>
+                <th>№</th>
+                <th>Назва</th>
+                <th>Колір</th>
+                <th>Розмір</th>
+                <th>Модель</th>
+                <th>Матеріал</th>
+                <th>Ціна</th>
+                <th>Кількість</th>
+                <th>Категорія</th>
+                <th>Фірма</th>
+                <th>Опис</th>
+                <th></th>
+            </tr>
+                {% for i in dishes %}
+                    <tr>
+                        <td>{{ i.0 }}</td><!--ячейка таблицы, которая отображает значение элемента (ID)-->
+                        <td>{{ i.1 }}</td>
+                        <td>{{ i.2 }}</td>
+                        <td>{{ i.3 }}</td>
+                        <td>{{ i.4 }}</td>
+                        <td>{{ i.5 }}</td>
+                        <td><b>{{ i.6 }} грн.</b></td>
+                        <td>{{ i.7 }}</td>
+                        <td>{{ i.8 }}</td>
+                        <td>{{ i.9 }}</td>
+                        <td>{{ i.10 }}</td>
+                        <td>
+                            <form class="form-add">
+                                <input type="hidden" name="dish_id" value="{{ i.0 }}">
+                                <button  type="button" class="btn-add" data-id="{{i.0}}" name="{{ i.1 }}" color="{{ i.2 }}" size="{{ i.3 }}" model="{{ i.4 }}" price="{{ i.6 }}">Додати<br> в кошик</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+        </table>
+
+    <script>
+        const cartData = localStorage.getItem('cart');
+        if (cartData != null) {
+            cart = JSON.parse(cartData);
+            console.log(cart);
+        } else {
+            cart={};
+        }
+        function addToCart(){
+            let articul=$(this).attr('data-id');
+            if( cart[articul] !=undefined && cart[articul]["count"]!=undefined ){
+                console.log("true");
+                cart[articul]["count"]++;
+            }
+            else{
+                cart[articul]={"count":1, "name":$(this).attr('name'), "color":$(this).attr('color'), "size":$(this).attr('size'), "model":$(this).attr('model'), "price":$(this).attr('price')};
+                cart[articul]["count"]=1;
+            }
+            localStorage.setItem('cart',JSON.stringify(cart));
+            console.log(cart);
+        }
+        $(document).on('click', 'button.btn-add', addToCart);
+    </script>
+{% endblock %} <!--основное содержимое страницы-->
+
+

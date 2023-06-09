@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+<html>
+    <head>
+        <title>{% block title %}BD-Shop{% endblock %}</title>
+        <link rel="stylesheet" href="{% static "css/home_css.css" %}">
+    </head>
+
+    <body>
+        <div class="screen">
+          {% block content %}
+            <div class="line"><b>BD-Shop</b></div>
+            <div class="div_home">
+                <h1 class="h_home">Вітаємо!<br>Оберіть свою роль:</h1>
+                <p><a href="/web/customer"><b>Покупець</b></a></p>
+                <p><a href="/web/manager"><b>Адміністратор</b></a></p>
+            </div>
+             <footer class="line2"></footer>
+           {% endblock %}
+        </div>
+    </body>
+</html>

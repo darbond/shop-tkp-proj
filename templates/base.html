@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        {% load static %}
+        <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    </head>
+    <style>
+          body{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Verdana, sans-serif;
+            background-color: #ebf2f2;
+          }
+          .topnav {
+              background-color: #1D766F;
+              overflow: hidden;
+          }
+          .topnav a {
+              float: left;
+              color: #ebf2f2;
+              text-align: center;
+              padding: 20px 30px;
+              text-decoration: none;
+              font-size: 17px;
+
+          }
+          .topnav a:hover {
+              background-color: #ebf2f2;
+              color: #1D766F;
+          }
+          .exit{
+              float:right;
+          }
+          .topnav .logo{
+              float: right;
+              color: #ebf2f2;
+              text-align: center;
+              padding: 18px 32px;
+              text-decoration: none;
+              font-size: 20px;
+              font-weight: bold;
+          }
+    </style>
+
+    <header>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <div class="topnav">
+             <a  href="/web/customer">Каталог</a>
+             <a href="/web/customer/cart">Кошик</a>
+            <div class="logo">BD-Shop</div>
+            <div class="exit"><a href="/web">Вийти</a></div>
+        </div>
+    </header>
+
+{% block content %}{% endblock %}
+    </body>
+</html>

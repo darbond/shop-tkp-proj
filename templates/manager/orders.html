@@ -1,0 +1,127 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <header>
+            <title>Замовлення</title>
+            <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+            <link rel="stylesheet" href="{% static "css/orders_css.css" %}">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <div class="topnav">
+                 <a href="/web/manager" class="catalog-link">Каталог</a>
+                 <a href="/web/manager/orders">Замовлення</a>
+                <div class="logo">BD-Shop</div>
+                <div class="exit"><a href="/web">Вийти</a></div>
+            </div>
+    </header>
+
+    <body>
+    <h1>Замовлення</h1>
+        <div class="topbar">
+            <ul class="orders-category">
+                 <li {% if not orderbyst %}{% endif %}> <a href=/web/manager/orders>Всі замовлення </a></li><span> | </span>
+                 <li{% if curcat == 1 %} style="font-weight: bold" {% endif %}> <a href="/web/manager/orders/1">Нові</a> </li><span> | </span>
+                 <li{% if curcat == 2 %} style="font-weight: bold" {% endif %}> <a href="/web/manager/orders/2">На виконанні</a> </li><span> | </span>
+                 <li{% if curcat == 3 %} style="font-weight: bold" {% endif %}> <a href="/web/manager/orders/3">Відхилені</a> </li><span> | </span>
+                 <li{% if curcat == 4 %} style="font-weight: bold" {% endif %}> <a href="/web/manager/orders/4">Завершені</a> </li><span> | </span>
+            </ul>
+        </div>
+
+         <table class="table_orders">
+            <tr>
+                <th>№</th>
+                <th>Статус</th>
+                <th>Опис</th>
+                <th>Сума</th>
+                <th>Подзвонити</th>
+                <th>Дії</th>
+            </tr>
+                {% for i in orders %}
+                    {% if orders == null %}
+                        Замовлення відсутні
+                        {% else %}
+                           <tr>
+                                <td><a href="/web/manager/orders/order-details/{{ i.0 }}">{{ i.0 }}</a></td><!--(ID)-->
+                                <td>{{ i.1 }}</td>
+                                <td>
+                                    {% for j in orderhasdish %}
+                                        {% if j.5 == i.0 %}
+                                        <table class="order-content">
+                                        <tr>
+                                            <td>{{ j.1 }}</td>
+                                            <td>{{ j.2 }}</td>
+                                            <td>{{ j.3 }} шт.</td>
+                                            <td>{{ j.4 }} грн.</td>
+                                        </tr>
+                                        </table>{% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td><b>
+                                    {% for s in order_sum %}
+                                        {% if s.0 == i.0 %}
+                                            {{ s.1 }} грн.
+                                        {% endif %}
+                                    {% endfor %}
+                                </b></td>
+                                <td>
+                                    {% if i.3 == 1 %} ТАК<br><br></bt>{{ i.4 }}<br>{{ i.5 }}
+                                        {% else %}НІ
+                                    {% endif %}
+                                </td>
+                                <td>
+                                     {% if i.1 != 'на виконанні' and i.1 != "відхилене" and i.1 != "завершене" %}
+                                        <button id="btn-process" class="btn-process" data-id="{{ i.0 }}" status="2">На виконання</button>
+                                        <button id="btn-deny" class="btn-deny" data-id="{{ i.0 }}" status="3">Відхилити</button>
+                                    {% elif i.1 == "на виконанні" %}
+                                        <button id="btn-deny" class="btn-deny" data-id="{{ i.0 }}" status="3">Відхилити</button>
+                                        <button id="btn-cancel" class="btn-cancel" data-id="{{ i.0 }}" status="4">Завершити</button>
+                                    {% else %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                   {% endif %}
+                {% endfor %}
+        </table>
+    <script>
+        const ordersData = localStorage.getItem('orders');
+        if (ordersData != null) {
+            orders = JSON.parse(ordersData);
+            console.log(orders);
+        } else {
+            orders={};
+        }
+         function changeStatus(){
+            let num=$(this).attr('data-id');
+            orders[num]={ "order_id":$(this).attr('data-id'), "status_id":$(this).attr('status')};
+            localStorage.setItem('orders',JSON.stringify(orders));
+            let postObj ={
+               'orders': JSON.parse(localStorage.getItem('orders'))
+            }
+            console.log('postObj', postObj)
+            let data = JSON.stringify(postObj)
+            console.log(data)
+
+            const url = document.URL
+            let xhr = new XMLHttpRequest()
+
+                 xhr.open('PATCH', url, true)
+                 xhr.setRequestHeader('Content-type', 'application/json; charset=UTF-8')
+                 xhr.send(data);
+
+                 xhr.onload = function () {
+                     if (xhr.status === 201) {
+                       console.log("ALL IS Ok")
+                     }
+                location.reload();
+                localStorage.clear();
+            }
+        }
+
+        $(".btn-process").on('click', changeStatus);
+        $(".btn-deny").on('click', changeStatus);
+        $(".btn-cancel").on('click', changeStatus);
+
+
+    </script>
+    </body>
+</html>

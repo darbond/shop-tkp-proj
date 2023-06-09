@@ -1,0 +1,60 @@
+{% load static %}
+
+    <header>
+        <title>Каталог</title>
+        <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+        <link rel="stylesheet" href="{% static "css/products_css.css" %}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <div class="topnav">
+             <a href="/web/manager" class="catalog-link">Каталог</a>
+             <a href="/web/manager/orders">Замовлення</a>
+            <div class="logo">BD-Shop</div>
+            <div class="exit"><a href="/web">Вийти</a></div>
+        </div>
+    </header>
+
+        <h1>Каталог посуду</h1>
+        <div class="sidebar">
+            <h3>Категорії</h3>
+            <ul class="categories">
+                <li {% if not category %}{% endif %}> <a href=/web/manager/>Всі</a></li>
+                  {% for c in categories %}
+                    <li{% if curcat == c.1 %} style="font-weight: bold" {% endif %}> <a href="/web/manager/{{ c.1 }}">{{ c.0 }}</a> </li>
+                  {% endfor %}
+            </ul>
+        </div>
+
+        <table class="table_product">
+            <tr>
+                <th>№</th>
+                <th>Назва</th>
+                <th>Колір</th>
+                <th>Розмір</th>
+                <th>Модель</th>
+                <th>Матеріал</th>
+                <th>Ціна</th>
+                <th>Кількість</th>
+                <th>Категорія</th>
+                <th>Фірма</th>
+                <th>Опис</th>
+                <th></th>
+            </tr>
+                {% for i in dishes %}<!--цикл который перебирает все элементы списка "dishes" и генерирует строки таблицы для каждого элемента-->
+                    <tr>
+                        <td>{{ i.0 }}</td><!--ячейка таблицы, которая отображает значение элемента (ID)-->
+                        <td>{{ i.1 }}</td>
+                        <td>{{ i.2 }}</td>
+                        <td>{{ i.3 }}</td>
+                        <td>{{ i.4 }}</td>
+                        <td>{{ i.5 }}</td>
+                        <td><b>{{ i.6 }} грн.</b></td>
+                        <td>{{ i.7 }}</td>
+                        <td>{{ i.8 }}</td>
+                        <td>{{ i.9 }}</td>
+                        <td>{{ i.10 }}</td>
+                    </tr>
+                {% endfor %}
+        </table>
+
+
+

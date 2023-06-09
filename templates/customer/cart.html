@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Кошик{% endblock %}
+
+{% block content %}
+    <header>
+        <link rel="stylesheet" href="{% static "css/cart_css.css" %}">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    </header>
+
+    <body>
+        <h1 id="your-cart">Ваш кошик</h1>
+        <h1 id="your-order" style="display: none; font-size: 34px">Ваше замовлення</h1>
+        <div class="my" id="my">
+            <div class="my-cart" id="my-cart"></div><!--сюда передаем с функции таблицу-->
+            <div class="my-cart2" style="display: none"></div><!--сюда передаем с функции таблицу2-->
+            <div class="my-cart-sum"><b>Сума замовлення: <span id="my-cart-sum"></span> грн.</b></div>
+            <div class="my-cart-btn" id="my-cart-btn-order"><button class="btn-order" >Перейти до оформлення замовлення</button></div>
+        </div>
+
+         <div id="div-form">
+             <p id="title-form"><b>Оформлення замовлення</b></p>
+
+		     <form id="order-form" class="order-form">
+               {% csrf_token %}
+                 <p>
+                    <label class="description" for="lastname"><span class="star">*</span>Введіть прізвище та ім'я: </label>
+                    <span><input id="lastname" name= "lastname" type="text" placeholder="прізвище" maxlength="30" size="14" required /></span>
+                    <span><input id="firstname" name= "firstname" type="text"  placeholder="ім'я" maxlength="30" size="8" required/></span>
+                     <span id="name_error" class="field_error" >Поля обов'язкові</span>
+                     <span id="name_length_error" class="field_error" >Довжина прізвища та ім'я повинна бути від 2 до 30 букв</span>
+                     <span id="name_type_error" class="field_error" >Прізвище та ім'я не повинні містити цифри та символи</span>
+                 </p>
+
+                 <p>
+                    <label class="description" for="tel"><span class="star">*</span>Введіть телефон: </label>
+                    <span><input id="tel" name="tel" type="text" maxlength="13" placeholder="+380XXXXXXXXX" required/></span>
+                     <span id="tel_error" class="field_error">Полe обов'язковe</span>
+                     <span id="tel_length_error" class="field_error" >Телефон має бути у форматі: +380ххххххххх ("+" та 12 цифр)</span>
+                 </p>
+
+                 <p>
+                    <label class="description" for="email"><span class="no-star">*</span>Введіть електронну пошту: </label>
+                    <span> <input id="email" name="email" type="email" size="40" maxlength="100"/></span>
+                      <span id="email_error" class="field_error">Електронна пошта має містити @</span>
+                 </p>
+
+                 <p>
+                    <label class="description" ><span class="star">*</span>Оберіть спосіб доставки: </label><br><br>
+                    <span>
+                        <input id="delivery1" class="input-check" name="delivery" type="radio" value="1" required/>
+                        <label for="delivery1">курьер</label><br><br>
+                        <input id="delivery2" class="input-check" name="delivery" type="radio" value="2" required/>
+                        <label for="delivery2">Нова Пошта</label><br><br>
+                        <input id="delivery3" class="input-check" name="delivery" type="radio" value="3" required/>
+                        <label for="delivery3">Укр Пошта</label><br>
+                    </span>
+                      <span id="delivery_error" class="field_error">Обрання способу доставки є обов'язковим</span>
+                 </p>
+
+                 <p>
+                    <label class="description" for="address"><span class="star">*</span>Введіть адресу доставки: </label>
+                    <div> <input id="address" name="address" type="text" maxlength="256" size="50" required/> </div>
+                      <span id="address_error" class="field_error">Полe обов'язковe</span>
+                 </p>
+
+                 <p>
+                    <label class="description" for="details"><span class="no-star">*</span>Введіть деталі доставки: </label>
+                    <div> <textarea id="details" name="details" rows="5" cols="50" maxlength="1000"></textarea> </div>
+                 </p>
+
+                 <p>
+                    <label class="description"><span class="star">*</span>Оберіть спосіб оплати: </label><br><br>
+                    <span>
+                        <input id="payment1" class="input-check" name="payment" type="radio" value="1" required/>
+                        <label for="payment1">безготівкова</label><br><br>
+                        <input id="payment2" class="input-check" name="payment" type="radio" value="2" required/>
+                        <label for="payment2">оплата готівкою</label><br>
+                    </span>
+                     <span id="payment_error" class="field_error">Обрання способу оплати є обов'язковим</span>
+                 </p><br>
+                 <p>
+		            <span>
+			            <input id="call" class="input-check" name="call" type="checkbox" value="1"/>
+                        <label for="call">Зателефонуйте мені для підтвердження замовлення</label>
+		            </span>
+                 </p>
+
+                 <p class="buttons">
+                    <input type="hidden" name="form_id" value="46827" />
+                    <input id="saveForm" class="input-check btn-send-order" type="button" name="submit-order" value="Оформити замовлення" />
+		         </p>
+              </form>
+          </div>
+     <div class="cart-created" id="cart-created"></div>
+    </body>
+
+
+    <script>
+            let cart = localStorage.getItem('cart') ? JSON.parse(localStorage.getItem('cart')) : {}
+            showCart();
+            $(document).on('click', 'button.btn-order', viewForm);
+
+            function showCart() {
+                    let rows = '';
+                    let rows2 = '';
+                    for (const key in cart) {
+                        rows += `<tr>
+                                   <td>${cart[key]['name']}</td>
+                                   <td>${cart[key]['color']}</td>
+                                   <td>${cart[key]['size']}</td>
+                                   <td>${cart[key]['model']}</td>
+                                   <td>${cart[key]['price']} грн.</td>
+                                   <td id="td-btn" class="td-btn">
+                                        <button id="btn-minus" class="btn-minus" data-id="${key}">-</button>
+                                        ${cart[key]['count']}
+                                        <button id="btn-plus" class="btn-plus" data-id="${key}">+</button>
+                                        <button id="btn-delete" class="btn-delete" data-id="${key}">x</button>
+                                   </td>
+
+                               </tr>`;
+                    }
+                    $('.my-cart').html(
+                        `<table id="table-cart">
+                            <tr>
+                                <th>Назва</th>
+                                <th>Колір</th>
+                                <th>Розмір</th>
+                                <th>Модель</th>
+                                <th>Ціна</th>
+                                <th>Кількість</th>
+                            </tr>
+                            ${rows}
+                        </table>`
+                    );
+                    for (const key in cart) {
+                        rows2 += `<tr>
+                                   <td>${cart[key]['name']}</td>
+                                   <td>${cart[key]['color']}</td>
+                                   <td>${cart[key]['size']}</td>
+                                   <td>${cart[key]['model']}</td>
+                                   <td>${cart[key]['price']} грн.</td>
+                                   <td > ${cart[key]['count']}</td>
+                               </tr>`;
+                    }
+
+                     $('.my-cart2').html(
+                        `<table>
+                            <tr>
+                                <th>Назва</th>
+                                <th>Колір</th>
+                                <th>Розмір</th>
+                                <th>Модель</th>
+                                <th>Ціна</th>
+                                <th>Кількість</th>
+                            </tr>
+                            ${rows2}
+                        </table>`
+                    );
+
+                    //подсчет суммы корзины
+                    let sum = 0;
+                    for (const key in cart) {
+                        sum += cart[key]['price'] * cart[key]['count'];
+                    }
+                    let summa = sum.toFixed(2);
+                    $('#my-cart-sum').html(summa);
+
+                    // вызов добавление, вычитание, удаление в корзине
+                    $(".btn-plus").on('click', plusDish);
+                    $(".btn-minus").on('click', minusDish);
+                    $(".btn-delete").on('click', deleteDish);
+
+             }
+            $("#saveForm").on('click', SendForm);
+            function saveCartToLS(){
+                 localStorage.setItem('cart',JSON.stringify(cart));
+            }
+
+            //добавление, вычитание, удаление в корзине
+            function plusDish(){
+                 let articul=$(this).attr('data-id');
+                 cart[articul]["count"]++;
+                 saveCartToLS();
+                 showCart();
+            }
+            function minusDish(){
+                 let articul=$(this).attr('data-id');
+                 if(cart[articul]["count"]>1) {
+                     cart[articul]["count"]--;
+                 }
+                 else {
+                    delete cart[articul];
+                    document.getElementById("div-form").style.display = "none";
+                 }
+                 saveCartToLS();
+                 showCart();
+            }
+            function deleteDish(){
+                 let articul=$(this).attr('data-id');
+                 delete cart[articul];
+                 document.getElementById("div-form").style.display = "none";
+                 saveCartToLS();
+                 showCart();
+            }
+
+            function viewForm() {
+                if($.isEmptyObject(cart)) document.getElementById("div-form").style.display = "none";
+                else document.getElementById("div-form").style.display = "block";
+            }
+
+
+            function SendForm() {
+                console.log('SendForm');
+                let firstname= document.getElementById('firstname').value;
+                let lastname= document.getElementById('lastname').value;
+                let tel= document.getElementById('tel').value;
+                let email= document.getElementById('email').value;
+                     if (!lastname || !firstname) {
+                        return document.getElementById("name_error").style["display"] = 'block';
+
+                     } else if(lastname.length<2 || lastname.length>30 || firstname.length<2 || firstname.length>30){
+                         return document.getElementById("name_length_error").style["display"] = 'block';
+                     } else if(!/^[a-zA-Zа-яА-Я'ІіЄєЇїҐґ]+$/g.test(lastname) || !/^[a-zA-Zа-яА-Я'ІіЄєЇїҐґ]+$/g.test(firstname)){
+                         return document.getElementById("name_type_error").style["display"] = 'block';
+                     }
+                      if(!tel){
+                        return document.getElementById("tel_error").style["display"] = 'block';
+                     } else if(tel.length!=13 || !/^[0-9+]+$/g.test(tel)){
+                        return document.getElementById("tel_length_error").style["display"] = 'block';
+                     }
+                     if(email){
+                          if(!email.includes("@")) {
+                              document.getElementById("email_error").style["display"] = 'block';
+                              return;
+                          }
+                     }
+                     if(!document.getElementById('delivery1').checked && !document.getElementById('delivery2').checked && !document.getElementById('delivery3').checked){
+                        return document.getElementById("delivery_error").style["display"] = 'block';
+                     }
+                     if(!document.getElementById('address').value) return document.getElementById("address_error").style["display"] = 'block';
+                     if(!document.getElementById('payment1').checked && !document.getElementById('payment2').checked){
+                        return document.getElementById("payment_error").style["display"] = 'block';
+                     }
+                console.log('Check row');
+
+                //формируем данные из формы которые будут отправлены на сервер
+                 let postObj = {
+                    'lastname':document.getElementById('lastname').value,
+                    'firstname':document.getElementById('firstname').value,
+                    'tel':document.getElementById('tel').value,
+                    'delivery-type': document.querySelector('input[name="delivery"]:checked')?.value,
+                    'address': document.getElementById('address').value,
+                    'payment-type': document.querySelector('input[name="payment"]:checked')?.value,
+                    'call':document.getElementById('call').checked,
+                    'cart': JSON.parse(localStorage.getItem('cart'))
+                 }
+                 const emailField = document.getElementById('email');
+                 if (emailField.value.trim() !== '') {
+                     postObj.email = emailField.value;
+                 }
+                 const detailsField = document.getElementById('details');
+                 if (detailsField.value.trim() !== '') {
+                     postObj.details = detailsField.value;
+                 }
+                 console.log('postObj', postObj)
+                 let data = JSON.stringify(postObj)//конвертируем данные в JSON
+                 const url = "http://127.0.0.1:8000/web/customer/cart/"//адрес куда отправляю запрос
+                 let xhr = new XMLHttpRequest()
+
+                 // Добавить проверку, если есть необходимые данные, тогда отправить запрос
+
+                 xhr.open('POST', url, true)//открыли запрос, вызвав open() метод, передав параметры: метод запроса (отправка данных на сервер),адрес,запуск кода
+                 xhr.setRequestHeader('Content-type', 'application/json; charset=UTF-8')//установка заголовка запроса, сообщая серверу, как обрабатывать данные
+                 xhr.send(data);//отправка тела запроса
+
+                 xhr.onload = function () { //ожидание ответа от бека о выполнении запроса
+                     if (xhr.status === 201) {
+                         const res_data = JSON.parse(xhr.response)
+                         if (res_data?.order_id) {
+                             document.getElementById("table-cart").style["display"] = 'none';
+                             document.querySelector(".my-cart2").style["display"] = 'block';
+                             document.getElementById("div-form").style["display"] = 'none';
+                             document.getElementById("my-cart-btn-order").style["display"] = 'none';
+                             document.getElementById("your-cart").style["display"] = 'none';
+                             document.getElementById("your-order").style["display"] = 'block';
+                             document.getElementById("cart-created").style["display"] = 'block';
+                             $('.cart-created').html(
+                                 `<h2> Ваше замовлення -  <span style="color:#1D766F">№ ${res_data.order_id}</span>  успішно оформлено!</h2>`
+                             )
+                        }
+                     } else {
+                             window.location.href = '/web/customer/error';
+                     }
+                }
+                localStorage.clear();
+            }
+    </script>
+{% endblock %}
+</html>
